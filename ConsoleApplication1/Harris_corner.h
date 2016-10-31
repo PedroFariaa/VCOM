@@ -1,6 +1,6 @@
 #pragma once
 #include "Image.h"
-#include "types.hpp"
+#include "opencv2/features2d/features2d.hpp"
 #include <vector>
 
 using namespace std;
@@ -8,17 +8,17 @@ using namespace cv;
 
 class Harris_corner
 {
-	static Harris_corner* instance;
+	Harris_corner * instance;
 public:
 	//variables
-	static int BLOCK_SIZE;
-	static int APERTURE_SIZE;
-	static int THRESHOLD;
-	static double k;
+	int BLOCK_SIZE = 2;
+	int APERTURE_SIZE = 3;
+	int THRESHOLD = 0;
+	double k = 0.4;
 
 	//functions
-	vector<cv::KeyPoint> run(Image img);
-	static Harris_corner* getInstance();
+	vector<KeyPoint> run(Image img);
+	Harris_corner* getInstance();
 
 };
 

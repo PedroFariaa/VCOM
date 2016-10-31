@@ -10,28 +10,21 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "Image.h"
+#include "Harris_corner.h"
 
 using namespace std;
 using namespace cv;
 
 /// Global variables
-vector<Mat> images= vector<Mat>();
+vector<Image> images= vector<Image>();
 
 
 int main(int, char** argv){
-	images.push_back(Image(argv[1]));
-
-
-	//show the image on window 
-	imshow("Image1", src);
-
-	cvtColor(src, imgg, CV_BGR2GRAY);
-	imshow("Greyscale", imgg);
-
-	//equalized histogram
-	equalizeHist(imgg, imgeh);
-	imshow("eq histogram", imgeh);
-
+	
+	Image img1 = Image(argv[1]);
+	images.push_back(img1);
+	Harris_corner a = Harris_corner();
+	a.run(img1);
 	waitKey(0);
 	return 0;
 }

@@ -9,22 +9,22 @@ Image::Image()
 
 Image::Image(char* filename)
 {
-	this->src = imread(filename);
-	cvtColor(src, this->gray, CV_BGR2GRAY);
+	src = imread(filename);
+	cvtColor(src, gray, CV_BGR2GRAY);
 }
-
-Image::showImage()
+/*
+void Image::showImage()
 {
-	imshow("Image", this->src);
+	imshow("Image", src);
 }
 
 
-Image::showgreyImage()
+void Image::showgreyImage()
 {
-	imshow("Grey Image", this->gray);
-}
+	imshow("Grey Image", gray);
+}*/
 
-cv::Mat Image::getImage()
+Mat Image::getImage()
 {
 	return this->src;
 }

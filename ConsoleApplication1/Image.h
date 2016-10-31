@@ -5,17 +5,19 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+using namespace cv;
+
 class Image{
 private:
-	cv::Mat src, gray;
+	Mat src, gray;
 	int n_cars;
 public:
 	Image();
 	Image(char* filename);
-	void showImage();
-	void showgreyImage();
-	cv::Mat getImage();
-	cv::Mat getGreyImage();
+	//void showImage();
+	//void showgreyImage();
+	Mat getImage();
+	Mat getGreyImage();
 	~Image();
 };
 
