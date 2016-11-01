@@ -38,6 +38,29 @@ Mat Morf_operations::Erosion(Mat src, int e_elem, int e_size)
 	return erosion_dst;
 }
 
+Mat Morf_operations::TopHat(Mat src)
+{
+	Mat res;
+	Mat element = getStructuringElement(morph_elem, Size(2 * morph_size + 1, 2 * morph_size + 1), Point(morph_size, morph_size));
+
+	/// Apply the erosion operation
+	morphologyEx(src, res, MORPH_TOPHAT, element);
+
+	return res;
+	
+}
+
+Mat Morf_operations::BlackHat(Mat scr)
+{
+	Mat res;
+	Mat element = getStructuringElement(morph_elem, Size(2 * morph_size + 1, 2 * morph_size + 1), Point(morph_size, morph_size));
+
+	/// Apply the erosion operation
+	morphologyEx(scr, res, MORPH_BLACKHAT, element);
+
+	return res;
+}
+
 
 Mat Morf_operations::Dilation(Mat src)
 {

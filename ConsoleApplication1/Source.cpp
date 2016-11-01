@@ -42,7 +42,22 @@ int main(int, char** argv){
 	Mat g_dilated = mf.Dilation(g_eroded,1,4);
 	imshow("opening gray", g_dilated);
 
+	Mat th = mf.TopHat(src);
+	Mat bh = mf.BlackHat(src);
+	Mat gth = mf.TopHat(src_gray);
+	Mat gbh = mf.BlackHat(src_gray);
+	/*
+	imshow("tophat", th);
+	imshow("blackhat", bh);
+	imshow("gray tophat", gth);
+	*/
+	imshow("gray blackhat", gbh);
 
+	//closing
+	Mat eroded_gbh = mf.Erosion(gbh, 1, 1);
+	Mat final_gbh = mf.Dilation(eroded_gbh, 1, 1);
+	imshow("after closing", final_gbh);
+	imshow("corwees", src);
 	// Set up the detector with default parameters.
 	SimpleBlobDetector detector;
 
