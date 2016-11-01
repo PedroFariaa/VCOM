@@ -150,12 +150,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BckgSubt.cpp" />
+    <ClCompile Include="Blob.cpp" />
     <ClCompile Include="Image.cpp" />
+    <ClCompile Include="Morf_operations.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BckgSubt.h" />
+    <ClInclude Include="Blob.h" />
     <ClInclude Include="Image.h" />
+    <ClInclude Include="Morf_operations.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>

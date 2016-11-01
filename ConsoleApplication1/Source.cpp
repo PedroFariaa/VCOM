@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "Image.h"
 #include "BckgSubt.h"
+#include "Morf_operations.h"
 
 using namespace std;
 using namespace cv;
@@ -23,16 +24,24 @@ Mat src, src_gray, bckg, bckg_gray, dest;
 int main(int, char** argv){
 
 	// Read image
-	src = imread("../data/PKlot_FPR05_subset/2013-03-09_08_50_03.jpg");
+	src = imread("../data/PKlot_FPR05_subset/2013-03-05_08_20_02.jpg");
 	cvtColor(src, src_gray, CV_BGR2GRAY);
-	imshow("origin", src);
+	//imshow("origin", src);
 	//background subtration
-	bckg = imread("../data/PKlot_FPR05_subset/2013-03-02_06_25_00.jpg");
+	bckg = imread("../data/PKlot_FPR05_subset/2013-03-02_06_30_00.jpg");
 	cvtColor(bckg, bckg_gray, CV_BGR2GRAY);
-	BckgSubt sub = BckgSubt(src_gray, bckg_gray);
+	BckgSubt sub = BckgSubt(src, bckg);
 	sub.apply();
 	dest = sub.getrmbckg();
-	imshow("sub", dest);
+	//imshow("sub", dest);
+
+	Morf_operations mf;
+
+	//opening
+	Mat g_eroded = mf.Erosion(src_gray,1,4);
+	Mat g_dilated = mf.Dilation(g_eroded,1,4);
+	imshow("opening gray", g_dilated);
+
 
 	// Set up the detector with default parameters.
 	SimpleBlobDetector detector;
@@ -47,7 +56,7 @@ int main(int, char** argv){
 	drawKeypoints(dest, keypoints, im_with_keypoints, Scalar(0, 0, 255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
 
 	// Show blobs
-	imshow("keypoints", im_with_keypoints);
+	//imshow("keypoints", im_with_keypoints);
 	
 	waitKey(0);
 	return 0;
