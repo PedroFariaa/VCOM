@@ -6,11 +6,13 @@
 
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
+#include "opencv2/features2d/features2d.hpp"
 #include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
 #include "Image.h"
-#include "Harris_corner.h"
+#include "BckgSubt.h"
+#include "Morf_operations.h"
 
 using namespace std;
 using namespace cv;
@@ -67,14 +69,64 @@ void updateBlobParams(int, void*) {
 	imshow("keypoints", im_with_keypoints);
 }
 
+Mat src, src_gray, bckg, bckg_gray, dest;
 
 int main(int, char** argv){
+
+	// Read image
+	src = imread("../data/PKlot_FPR05_subset/2013-03-05_08_20_02.jpg");
+	cvtColor(src, src_gray, CV_BGR2GRAY);
+	//imshow("origin", src);
+	//background subtration
+	bckg = imread("../data/PKlot_FPR05_subset/2013-03-02_06_30_00.jpg");
+	cvtColor(bckg, bckg_gray, CV_BGR2GRAY);
+	BckgSubt sub = BckgSubt(src, bckg);
+	sub.apply();
+	dest = sub.getrmbckg();
+	//imshow("sub", dest);
+
+	Morf_operations mf;
+
+	//opening
+	Mat g_eroded = mf.Erosion(src_gray,1,4);
+	Mat g_dilated = mf.Dilation(g_eroded,1,4);
+	imshow("opening gray", g_dilated);
+
+	Mat th = mf.TopHat(src);
+	Mat bh = mf.BlackHat(src);
+	Mat gth = mf.TopHat(src_gray);
+	Mat gbh = mf.BlackHat(src_gray);
+	/*
+	imshow("tophat", th);
+	imshow("blackhat", bh);
+	imshow("gray tophat", gth);
+	*/
+	imshow("gray blackhat", gbh);
+
+	//closing
+	Mat eroded_gbh = mf.Erosion(gbh, 1, 1);
+	Mat final_gbh = mf.Dilation(eroded_gbh, 1, 1);
+	imshow("after closing", final_gbh);
+	imshow("corwees", src);
+	// Set up the detector with default parameters.
+	SimpleBlobDetector detector;
+
+	// Detect blobs.
+	vector<KeyPoint> keypoints;
+	detector.detect(dest, keypoints);
+
+	// Draw detected blobs as red circles.
+	// DrawMatchesFlags::DRAW_RICH_KEYPOINTS flag ensures the size of the circle corresponds to the size of blob
+	Mat im_with_keypoints;
+	drawKeypoints(dest, keypoints, im_with_keypoints, Scalar(0, 0, 255), DrawMatchesFlags::DRAW_RICH_KEYPOINTS);
+
+	// Show blobs
+	//imshow("keypoints", im_with_keypoints);
 	
+
+	/* BLOB  */
 	img1 = Image(argv[1]);
 	images.push_back(img1);
-	/*Harris_corner a = Harris_corner();
-	a.run(img1);*/
-
 
 	/// Create windows
 	namedWindow("Blob", CV_WINDOW_AUTOSIZE);

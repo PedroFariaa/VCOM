@@ -167,13 +167,19 @@ opencv_videostab2413d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Harris_corner.h" />
-    <ClInclude Include="Image.h" />
+    <ClCompile Include="BckgSubt.cpp" />
+    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="Morf_operations.cpp" />
+    <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Harris_corner.cpp" />
-    <ClCompile Include="Image.cpp" />
-    <ClCompile Include="Source.cpp" />
+    <ClInclude Include="BckgSubt.h" />
+    <ClInclude Include="Image.h" />
+    <ClInclude Include="Morf_operations.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ConsoleApplication1.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
