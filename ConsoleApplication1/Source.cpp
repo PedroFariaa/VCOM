@@ -4,6 +4,10 @@
 * @author OpenCV team
 */
 
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/video/background_segm.hpp>
+
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/features2d/features2d.hpp"
@@ -13,6 +17,8 @@
 #include "Image.h"
 #include "BckgSubt.h"
 #include "Morf_operations.h"
+#include "Detector.h"
+#include "SURF_detector.h"
 
 using namespace std;
 using namespace cv;
@@ -76,14 +82,7 @@ int main(int, char** argv){
 	// Read image
 	src = imread("../data/PKlot_FPR05_subset/2013-03-05_08_20_02.jpg");
 	cvtColor(src, src_gray, CV_BGR2GRAY);
-	//imshow("origin", src);
-	//background subtration
-	bckg = imread("../data/PKlot_FPR05_subset/2013-03-02_06_30_00.jpg");
-	cvtColor(bckg, bckg_gray, CV_BGR2GRAY);
-	BckgSubt sub = BckgSubt(src, bckg);
-	sub.apply();
-	dest = sub.getrmbckg();
-	//imshow("sub", dest);
+
 
 	Morf_operations mf;
 
@@ -92,22 +91,39 @@ int main(int, char** argv){
 	Mat g_dilated = mf.Dilation(g_eroded,1,4);
 	imshow("opening gray", g_dilated);
 
-	Mat th = mf.TopHat(src);
-	Mat bh = mf.BlackHat(src);
-	Mat gth = mf.TopHat(src_gray);
 	Mat gbh = mf.BlackHat(src_gray);
-	/*
-	imshow("tophat", th);
-	imshow("blackhat", bh);
-	imshow("gray tophat", gth);
-	*/
-	imshow("gray blackhat", gbh);
 
-	//closing
-	Mat eroded_gbh = mf.Erosion(gbh, 1, 1);
-	Mat final_gbh = mf.Dilation(eroded_gbh, 1, 1);
-	imshow("after closing", final_gbh);
-	imshow("corwees", src);
+	SurfFeatureDetector detectorS(800);
+
+	vector<KeyPoint> keypoints_1, keypoints_2, keypoints_3;
+
+	detectorS.detect(src_gray, keypoints_1);
+	detectorS.detect(g_dilated, keypoints_2);
+	detectorS.detect(gbh, keypoints_3);
+
+	//-- Draw keypoints
+	Mat img_keypoints_1; Mat img_keypoints_2; Mat img_keypoints_3;
+
+	drawKeypoints(src_gray, keypoints_1, img_keypoints_1, Scalar::all(-1), DrawMatchesFlags::DEFAULT);
+	drawKeypoints(g_dilated, keypoints_2, img_keypoints_2, Scalar::all(-1), DrawMatchesFlags::DEFAULT);
+	drawKeypoints(gbh, keypoints_3, img_keypoints_3, Scalar::all(-1), DrawMatchesFlags::DEFAULT);
+
+	//-- Show detected (drawn) keypoints
+	imshow("Keypoints 1", img_keypoints_1);
+	imshow("Keypoints 2", img_keypoints_2);
+	imshow("Keypoints 3", img_keypoints_3);
+
+	// STEP 2
+	SurfDescriptorExtractor extractor;
+	Mat descriptors_1, descriptors_2, descriptors_3;
+
+	extractor.compute(src_gray, keypoints_1, descriptors_1);
+	extractor.compute(g_dilated, keypoints_2, descriptors_2);
+	extractor.compute(gbh, keypoints_3, descriptors_3);
+
+	
+
+
 	// Set up the detector with default parameters.
 	SimpleBlobDetector detector;
 
@@ -125,6 +141,7 @@ int main(int, char** argv){
 	
 
 	/* BLOB  */
+	/*
 	img1 = Image(argv[1]);
 	images.push_back(img1);
 
@@ -137,12 +154,12 @@ int main(int, char** argv){
 	createTrackbar("Min Threshold:", "Blob", &minThres, 100, updateBlobParams);
 	createTrackbar("Max Threshold:", "Blob", &minThres, 500, updateBlobParams);
 	/// Create Circularity Trackbar
-	createTrackbar("Min Circularity:", "Blob", &minArea, 10, updateBlobParams);
+	createTrackbar("Min Circularity:", "Blob", &minCirc, 10, updateBlobParams);
 	/// Create Inertia Trackbar
-	createTrackbar("Min Inertia:", "Blob", &minArea, 10, updateBlobParams);
+	createTrackbar("Min Inertia:", "Blob", &minInert, 10, updateBlobParams);
 
 	updateBlobParams(minArea, 0);
-
+	*/
 
 	waitKey(0);
 	return 0;

@@ -11,18 +11,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Image.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BckgSubt.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Morf_operations.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <ClCompile Include="BckgSubt.cpp" />
+    <ClCompile Include="Image.cpp" />
+    <ClCompile Include="Morf_operations.cpp" />
+    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="SURF_detector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Image.h">
@@ -37,6 +30,12 @@
     <ClInclude Include="Morf_operations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Detector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SURF_detector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ConsoleApplication1.rc">
@@ -45,7 +44,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
-    <ClCompile Include="Harris_corner.cpp" />
     <ClCompile Include="Image.cpp" />
   </ItemGroup>
 </Project>
