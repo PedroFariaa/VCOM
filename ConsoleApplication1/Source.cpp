@@ -28,6 +28,7 @@ using namespace std;
 using namespace cv;
 
 Mat src, src_gray, bckg, bckg_gray, dest;
+int n_spots = 0;
 
 /// Global variables
 vector<Image> images= vector<Image>();
@@ -127,6 +128,8 @@ int main(int, char** argv){
 		boundRect.push_back(boundingRect(contours[i]));
 		if (boundRect[i].area() > 5000 && boundRect[i].area() < 20000) {
 			rectangle(drawing, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0);
+			n_spots++;
+			cout << "Lugares totais: " << n_spots;
 		}
 		
 	}
