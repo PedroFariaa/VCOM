@@ -121,17 +121,20 @@ int main(int, char** argv){
 		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
 		//drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, Point());
 	}
-
+	vector<RotatedRect> rod;
 	vector<Rect> boundRect;
 	for (int i = 0; i < contours.size(); i++) {
 		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
 		boundRect.push_back(boundingRect(contours[i]));
+		rod.push_back(minAreaRect(contours[i]));
 		if (boundRect[i].area() > 5000 && boundRect[i].area() < 20000) {
-			rectangle(drawing, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0);
+			//rectangle(drawing, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0);
 			n_spots++;
 			cout << "Lugares totais: " << n_spots;
 		}
-		
+		Point2f rect_points[4]; rod[i].points(rect_points);
+		for (int j = 0; j < 4; j++)
+			line(drawing, rect_points[j], rect_points[(j + 1) % 4], color, 1, 8);
 	}
 
 
