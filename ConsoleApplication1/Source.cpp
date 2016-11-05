@@ -32,6 +32,7 @@ int n_spots = 0;
 
 /// Global variables
 vector<Image> images= vector<Image>();
+int n_cars = 0;
 
 bool intersect(RotatedRect rt1, RotatedRect rt2) {
 	Point2f p(rt2.boundingRect().x, rt2.boundingRect().y);
@@ -162,10 +163,9 @@ int main(int, char** argv){
 	for (int i = 0; i< contours.size(); i++)
 	{
 		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-		//drawContours(drawing, contours, i, color, 2, 8, hierarchy, 0, Point());
+		drawContours(drawing, contours, i, color, CV_FILLED, 8, hierarchy, 0, Point());
 	}
 	vector<RotatedRect> rod;
-	vector<Rect> boundRect;
 	for (int i = 0; i < contours.size(); i++) {
 		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
 		rod.push_back(minAreaRect(contours[i]));
@@ -175,16 +175,42 @@ int main(int, char** argv){
 			&& !(rod[i].boundingRect().y > 150 && rod[i].boundingRect().y < 250) /*&& !overlappedRect(rod)*/) {
 			for (int j = 0; j < 4; j++) {
 				line(drawing, rect_points[j], rect_points[(j + 1) % 4], color, 1, 8);
-
 			}
 			n_spots++;
-			cout << "Lugares totais: " << n_spots;
+			cout << "Lugares totais: " << n_spots << endl;
 		}
 	}
 
+	Mat labels = Mat::zeros(src.size(), CV_8UC1);
+	vector<float> cont_avgsR(contours.size(), 0.f);
+	vector<float> cont_avgsG(contours.size(), 0.f);
+	vector<float> cont_avgsB(contours.size(), 0.f);
+	for (size_t i = 0; i < contours.size(); ++i)
+	{
+		drawContours(labels, contours, i, cv::Scalar(i), CV_FILLED);
+		Rect roi = boundingRect(contours[i]);
+		Scalar mean = cv::mean(src(roi), labels(roi) == i);
+		cont_avgsR[i] = mean[0];
+		cont_avgsG[i] = mean[1];
+		cont_avgsB[i] = mean[2];
+
+		//Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
+		rod.push_back(minAreaRect(contours[i]));
+		Point2f rect_points[4]; rod[i].points(rect_points);
+		if (rod[i].boundingRect().area() > 6000 && rod[i].boundingRect().area() < 20000 &&
+			rod[i].boundingRect().width < rod[i].boundingRect().height && rod[i].boundingRect().y < 577
+			&& !(rod[i].boundingRect().y > 150 && rod[i].boundingRect().y < 250) /*&& !overlappedRect(rod)*/) {
+			if ((mean[0] > 210 && mean[1] > 210 && mean[2] > 210) ||
+				(mean[0] < 25 && mean[1] < 25 && mean[2] < 25)) {
+				n_cars++;
+				cout << n_cars << "carros \n";
+			}
+		}
+	}
 
 	imshow("Result window", drawing);
 
+	/*
 	Mat dst, color_dst;
 	Canny(src, dst, 50, 200, 3);
 	cvtColor(dst, color_dst, CV_GRAY2BGR);
@@ -286,7 +312,7 @@ int main(int, char** argv){
 		imshow(ss.str(), quad);
 	}
 	
-
+	*/
 
 	///bounding
 	/*
@@ -323,10 +349,10 @@ int main(int, char** argv){
 
 	namedWindow("Source", 1);
 	imshow("Source", src);
-
+	/*
 	namedWindow("Detected Lines", 1);
 	imshow("Detected Lines", color_dst);
-
+	*/
 
 
 	/*
