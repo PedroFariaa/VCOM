@@ -33,6 +33,49 @@ int n_spots = 0;
 /// Global variables
 vector<Image> images= vector<Image>();
 
+bool intersect(RotatedRect rt1, RotatedRect rt2) {
+	Point2f p(rt2.boundingRect().x, rt2.boundingRect().y);
+	Point2f p2(rt2.boundingRect().x+rt2.boundingRect().width, rt2.boundingRect().y);
+	Point2f p3(rt2.boundingRect().x, rt2.boundingRect().y + rt2.boundingRect().height);
+	Point2f p4(rt2.boundingRect().x + rt2.boundingRect().width, rt2.boundingRect().y + rt2.boundingRect().height);
+	if (rt1.boundingRect().contains(p) || rt1.boundingRect().contains(p2) ||
+		rt1.boundingRect().contains(p3) || rt1.boundingRect().contains(p4)) {
+		return true;
+	}
+	return false;
+}
+
+double calcIntersctionArea(RotatedRect rt1, RotatedRect rt2) {
+	Rect intersRect;
+	double x11, x12, x21, x22, y11, y12, y21, y22;
+	x11 = rt1.boundingRect().x;
+	y11 = rt1.boundingRect().y;
+	x12 = rt1.boundingRect().x + rt1.boundingRect().width;
+	y12 = rt1.boundingRect().y + rt1.boundingRect().height;
+	x21 = rt2.boundingRect().x;
+	y21 = rt2.boundingRect().y;
+	x22 = rt2.boundingRect().x + rt2.boundingRect().width;
+	y22 = rt2.boundingRect().y + rt2.boundingRect().height;
+
+	double x_overlap = fmax(0, fmin(x12, x22) - fmax(x11, x21));
+	double y_overlap = fmax(0, fmin(y12, y22) - fmax(y11, y21));
+	double overlapArea = x_overlap * y_overlap;
+
+	double rt_area = min(rt1.boundingRect().area(), rt2.boundingRect().area());
+	return (double)overlapArea / rt_area;
+}
+
+bool overlappedRect(vector<RotatedRect> rodR) {
+	RotatedRect rot_rect = rodR[rodR.size()];
+	for (int i = 0; i < rodR.size() - 1; i++) {
+		if (intersect(rodR[i], rot_rect)) {
+			if (calcIntersctionArea(rodR[i], rot_rect) > 0.25)
+				return true;
+		}
+	}
+	return false;
+}
+
 bool comparator(Point2f a, Point2f b) {
 	return a.x<b.x;
 }
@@ -125,16 +168,18 @@ int main(int, char** argv){
 	vector<Rect> boundRect;
 	for (int i = 0; i < contours.size(); i++) {
 		Scalar color = Scalar(rng.uniform(0, 255), rng.uniform(0, 255), rng.uniform(0, 255));
-		boundRect.push_back(boundingRect(contours[i]));
 		rod.push_back(minAreaRect(contours[i]));
-		if (boundRect[i].area() > 5000 && boundRect[i].area() < 20000) {
-			//rectangle(drawing, boundRect[i].tl(), boundRect[i].br(), color, 2, 8, 0);
+		Point2f rect_points[4]; rod[i].points(rect_points);
+		if (rod[i].boundingRect().area() > 6000 && rod[i].boundingRect().area() < 20000 &&
+			rod[i].boundingRect().width < rod[i].boundingRect().height && rod[i].boundingRect().y < 577
+			&& !(rod[i].boundingRect().y > 150 && rod[i].boundingRect().y < 250) /*&& !overlappedRect(rod)*/) {
+			for (int j = 0; j < 4; j++) {
+				line(drawing, rect_points[j], rect_points[(j + 1) % 4], color, 1, 8);
+
+			}
 			n_spots++;
 			cout << "Lugares totais: " << n_spots;
 		}
-		Point2f rect_points[4]; rod[i].points(rect_points);
-		for (int j = 0; j < 4; j++)
-			line(drawing, rect_points[j], rect_points[(j + 1) % 4], color, 1, 8);
 	}
 
 
